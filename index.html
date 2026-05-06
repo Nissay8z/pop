@@ -1383,6 +1383,14 @@ function switchTab(tab) {
 }
 
 // ════════════════════════════════
+// UTILS
+// ════════════════════════════════
+const openaiBase = () => {
+  const b = cfg.baseUrl.replace(/\/$/, '');
+  return b.endsWith('/v1') ? b : b + '/v1';
+};
+
+// ════════════════════════════════
 // MODELS
 // ════════════════════════════════
 async function fetchModels() {
@@ -1393,23 +1401,24 @@ async function fetchModels() {
   try {
     let models = [];
 
-    // Ollama
+    // Essaie d'abord OpenAI-compatible (LM Studio, etc.)
     try {
-      const r = await fetch(url + '/api/tags');
-      if (r.ok) {
-        const d = await r.json();
-        models = (d.models || []).map(m => m.name);
-      }
-    } catch {}
-
-    // OpenAI compatible (LM Studio, etc.)
-    if (!models.length) {
-      const base = url.replace('/api', '');
-      const r = await fetch(base + '/v1/models');
+      const r = await fetch(openaiBase() + '/models');
       if (r.ok) {
         const d = await r.json();
         models = (d.data || []).map(m => m.id);
       }
+    } catch {}
+
+    // Si aucun modèle, essaie Ollama
+    if (!models.length) {
+      try {
+        const r = await fetch(url + '/api/tags');
+        if (r.ok) {
+          const d = await r.json();
+          models = (d.models || []).map(m => m.name);
+        }
+      } catch {}
     }
 
     if (models.length) {
@@ -1512,8 +1521,7 @@ async function sendChat() {
 
     // OpenAI-compat
     if (!fullText) {
-      const openBase = base.replace('/api', '');
-      const r = await fetch(openBase + '/v1/chat/completions', {
+      const r = await fetch(openaiBase() + '/chat/completions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ model, messages: payload, stream: true, temperature: cfg.temperature, max_tokens: cfg.maxTokens })
@@ -1533,11 +1541,11 @@ async function sendChat() {
       }
     }
 
-    if (!fullText) throw new Error('Aucune réponse. Vérifie qu\'Ollama tourne (ollama serve).');
+    if (!fullText) throw new Error('Aucune réponse. Vérifie qu\'Ollama ou LM Studio tourne.');
     conv.messages.push({ role: 'assistant', content: fullText });
     saveConvs();
   } catch (e) {
-    updateMsg(aiEl, `⚠ **Erreur** : ${e.message}\n\nAssure-toi qu'Ollama tourne avec :\n\`\`\`\nOLLAMA_ORIGINS=* ollama serve\n\`\`\``);
+    updateMsg(aiEl, `⚠ **Erreur** : ${e.message}\n\nAssure-toi qu'Ollama ou LM Studio tourne.`);
   }
 
   isGenerating = false;
@@ -1701,8 +1709,7 @@ async function runCode() {
       }
     }
     if (!fullText) {
-      const openBase = base.replace('/api', '');
-      const r = await fetch(openBase + '/v1/chat/completions', {
+      const r = await fetch(openaiBase() + '/chat/completions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ model, messages, stream: true, temperature: 0.1, max_tokens: cfg.maxTokens })
@@ -1975,8 +1982,7 @@ async function doSearch() {
     }
 
     if (!fullText) {
-      const openBase = base.replace('/api', '');
-      const resp = await fetch(openBase + '/v1/chat/completions', {
+      const resp = await fetch(openaiBase() + '/chat/completions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ model, messages: msgs, stream: true, temperature: 0.3, max_tokens: 1024 })
@@ -1997,7 +2003,7 @@ async function doSearch() {
       }
     }
 
-    if (!fullText) summaryEl.innerHTML = '<div style="color:var(--muted);font-size:11px;padding:20px">⚠ Lance Ollama pour la synthèse IA.</div>';
+    if (!fullText) summaryEl.innerHTML = '<div style="color:var(--muted);font-size:11px;padding:20px">⚠ Lance Ollama ou LM Studio pour la synthèse IA.</div>';
 
   } catch (e) {
     resultsEl.innerHTML = `
