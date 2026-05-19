@@ -1,48 +1,49 @@
-{
-  "name": "Configuration Repository",
-  "version": "1.0.0",
-  "providers": [
-    {
-      "id": "purstream-provider",
-      "name": "Purstream",
-      "description": "Provider HTTP automatique pour les films et séries en VF/VOSTFR.",
-      "version": "4.1.0",
-      "author": "Nissay8z",
-      "supportedTypes": [
-        "movie",
-        "tv"
-      ],
-      "url": "https://raw.githubusercontent.com/Nissay8z/pop/main/providers/purstream.js",
-      "enabled": true,
-      "contentLanguage": [
-        "fr"
-      ],
-      "formats": [
-        "m3u8",
-        "mp4"
-      ],
-      "supportsExternalPlayer": true
-    },
-    {
-      "id": "animesama-provider",
-      "name": "Anime Sama",
-      "description": "Provider HTTP dédié aux animés et mangas en VF et VOSTFR.",
-      "version": "1.0.0",
-      "author": "Nissay8z",
-      "supportedTypes": [
-        "tv"
-      ],
-      "url": "https://raw.githubusercontent.com/Nissay8z/pop/main/providers/animesama.js",
-      "enabled": true,
-      "contentLanguage": [
-        "fr"
-      ],
-      "formats": [
-        "m3u8",
-        "mp4"
-      ],
-      "supportsExternalPlayer": true
-    }
-  ]
-}
-
+[
+  {
+    "id": "purstream-provider",
+    "name": "Purstream",
+    "description": "Provider HTTP automatique pour les films et séries en VF/VOSTFR.",
+    "version": "4.1.0",
+    "author": "Nissay8z",
+    "supportedTypes": [
+      "movie",
+      "tv"
+    ],
+    "filename": "https://raw.githubusercontent.com/Nissay8z/pop/main/providers/purstream.js",
+    "enabled": true,
+    "logo": "",
+    "contentLanguage": [
+      "fr"
+    ],
+    "formats": [
+      "m3u8",
+      "mp4"
+    ],
+    "limited": false,
+    "disabledPlatforms": [],
+    "supportsExternalPlayer": true
+  },
+  {
+    "id": "animesama-provider",
+    "name": "Anime Sama",
+    "description": "Provider HTTP dédié aux animés et mangas en VF et VOSTFR.",
+    "version": "1.0.0",
+    "author": "Nissay8z",
+    "supportedTypes": [
+      "tv"
+    ],
+    "filename": "https://raw.githubusercontent.com/Nissay8z/pop/main/providers/animesama.js",
+    "enabled": true,
+    "logo": "",
+    "contentLanguage": [
+      "fr"
+    ],
+    "formats": [
+      "m3u8",
+      "mp4"
+    ],
+    "limited": false,
+    "disabledPlatforms": [],
+    "supportsExternalPlayer": true
+  }
+]
